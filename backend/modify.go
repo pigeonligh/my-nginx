@@ -38,6 +38,10 @@ func modifySSL(c *gin.Context) {
 		utils.Response(c, 0, err.Error(), nil)
 		return
 	}
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, "success", nil)
 }
 
@@ -98,6 +102,10 @@ func modifyHTTP(c *gin.Context) {
 	config.Rewrite = rewrite
 	config.Locations = locations
 	Data.NewModify = true
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, "success", nil)
 }
 
@@ -146,6 +154,10 @@ func modifyStream(c *gin.Context) {
 	config.ProxyTimeout = int(proxyTimeout)
 
 	Data.NewModify = true
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, "success", nil)
 }
 

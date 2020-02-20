@@ -23,6 +23,10 @@ func newSSL(c *gin.Context) {
 		utils.Response(c, 0, err.Error(), nil)
 		return
 	}
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, strconv.Itoa(index), nil)
 }
 
@@ -34,6 +38,10 @@ func newHTTP(c *gin.Context) {
 
 	index := Data.HTTP.New()
 	Data.NewModify = true
+	if err := Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, strconv.Itoa(index), nil)
 }
 
@@ -45,6 +53,10 @@ func newStream(c *gin.Context) {
 
 	index := Data.Stream.New()
 	Data.NewModify = true
+	if err := Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, strconv.Itoa(index), nil)
 }
 

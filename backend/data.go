@@ -38,9 +38,6 @@ func NewConfigs() *Configs {
 		Stream: streamconfig.NewMap(),
 		SSL:    ssl.NewMap(),
 	}
-	configs.HTTP.New()
-	configs.HTTP.New()
-	configs.HTTP.New()
 	configs.Save()
 	return configs
 }

@@ -25,7 +25,10 @@ func delSSL(c *gin.Context) {
 	}
 
 	delete(Data.SSL.Data, index)
-
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, "", nil)
 }
 
@@ -47,7 +50,10 @@ func delHTTP(c *gin.Context) {
 	}
 
 	delete(Data.HTTP.Data, index)
-
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, "", nil)
 }
 
@@ -69,7 +75,10 @@ func delStream(c *gin.Context) {
 	}
 
 	delete(Data.SSL.Data, index)
-
+	if err = Data.Save(); err != nil {
+		utils.Response(c, 0, err.Error(), nil)
+		return
+	}
 	utils.Response(c, 1, "", nil)
 }
 

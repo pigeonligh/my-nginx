@@ -55,6 +55,11 @@ func Setup(r *gin.RouterGroup) {
 
 		if err := backend.Data.Apply(); err != nil {
 			c.String(http.StatusConflict, "<pre>Error: \n"+err.Error())
+			return
+		}
+		if err := backend.Data.Save(); err != nil {
+			c.String(http.StatusConflict, "<pre>Error: \n"+err.Error())
+			return
 		}
 		utils.Redirect(c, "./success")
 	})
