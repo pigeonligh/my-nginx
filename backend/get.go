@@ -15,7 +15,7 @@ func getSSL(c *gin.Context) {
 
 	index, err := strconv.Atoi(c.Query("index"))
 	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
+		utils.Response(c, 0, err.Error()+c.Query("index"), nil)
 		return
 	}
 	config := Data.SSL.Data[index]
@@ -68,7 +68,7 @@ func getStream(c *gin.Context) {
 }
 
 func setupGET(r *gin.RouterGroup) {
-	r.GET("ssl", modifySSL)
-	r.GET("http", modifyHTTP)
-	r.GET("stream", modifyStream)
+	r.GET("ssl", getSSL)
+	r.GET("http", getHTTP)
+	r.GET("stream", getStream)
 }

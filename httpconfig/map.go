@@ -1,5 +1,7 @@
 package httpconfig
 
+import "github.com/pigeonligh/my-nginx/ssl"
+
 // Map struct
 type Map struct {
 	MaxIndex int             `json:"max_index"`
@@ -28,4 +30,15 @@ func NewMap() *Map {
 		MaxIndex: 0,
 		Data:     make(map[int]*Config),
 	}
+}
+
+// Apply function
+func (m *Map) Apply(sslMap *ssl.Map) error {
+	for _, config := range m.Data {
+		err := config.WriteConfig(sslMap)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

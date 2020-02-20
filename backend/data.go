@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/pigeonligh/my-nginx/httpconfig"
+	"github.com/pigeonligh/my-nginx/nginx"
 	"github.com/pigeonligh/my-nginx/ssl"
 	"github.com/pigeonligh/my-nginx/streamconfig"
 )
@@ -61,4 +62,26 @@ func LoadConfigs() (*Configs, error) {
 		return nil, err
 	}
 	return configs, nil
+}
+
+// Apply function
+func (c *Configs) Apply() error {
+	if !c.NewModify {
+		return nil
+	}
+	var err error
+	err = c.HTTP.Apply(c.SSL)
+	if err != nil {
+		return err
+	}
+	err = c.Stream.Apply()
+	if err != nil {
+		return err
+	}
+	err = nginx.Reload()
+	if err != nil {
+		return err
+	}
+	c.NewModify = false
+	return nil
 }

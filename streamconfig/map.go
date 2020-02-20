@@ -26,3 +26,14 @@ func NewMap() *Map {
 		Data:     make(map[int]*Config),
 	}
 }
+
+// Apply function
+func (m *Map) Apply() error {
+	for _, config := range m.Data {
+		err := config.WriteConfig()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
