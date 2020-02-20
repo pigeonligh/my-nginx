@@ -2,6 +2,7 @@ package backend
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 )
 
 func modifySSL(c *gin.Context) {
-	if !checkLogged(c) {
+	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
@@ -37,11 +38,11 @@ func modifySSL(c *gin.Context) {
 		utils.Response(c, 0, err.Error(), nil)
 		return
 	}
-	utils.Response(c, 1, strconv.Itoa(index), nil)
+	utils.Response(c, 1, "success", nil)
 }
 
 func modifyHTTP(c *gin.Context) {
-	if !checkLogged(c) {
+	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
@@ -65,16 +66,9 @@ func modifyHTTP(c *gin.Context) {
 	var rewrite string
 	var locations []*httpconfig.Location
 
-	isHTTPS, err = strconv.ParseBool(c.PostForm("is_https"))
-	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
-	}
-	available, err = strconv.ParseBool(c.PostForm("available"))
-	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
-	}
+	isHTTPS = bool(c.PostForm("is_https") == "true")
+	available = bool(c.PostForm("available") == "true")
+	fmt.Println(isHTTPS, available)
 	serverName = c.PostForm("server_name")
 	rewrite = c.PostForm("rewrite")
 
@@ -104,11 +98,11 @@ func modifyHTTP(c *gin.Context) {
 	config.Rewrite = rewrite
 	config.Locations = locations
 	Data.NewModify = true
-	utils.Response(c, 1, "", nil)
+	utils.Response(c, 1, "success", nil)
 }
 
 func modifyStream(c *gin.Context) {
-	if !checkLogged(c) {
+	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
@@ -152,7 +146,7 @@ func modifyStream(c *gin.Context) {
 	config.ProxyTimeout = int(proxyTimeout)
 
 	Data.NewModify = true
-	utils.Response(c, 1, "", nil)
+	utils.Response(c, 1, "success", nil)
 }
 
 func setupModify(r *gin.RouterGroup) {

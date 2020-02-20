@@ -8,7 +8,7 @@ import (
 )
 
 func newSSL(c *gin.Context) {
-	if !checkLogged(c) {
+	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
@@ -27,7 +27,7 @@ func newSSL(c *gin.Context) {
 }
 
 func newHTTP(c *gin.Context) {
-	if !checkLogged(c) {
+	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
@@ -38,7 +38,7 @@ func newHTTP(c *gin.Context) {
 }
 
 func newStream(c *gin.Context) {
-	if !checkLogged(c) {
+	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}

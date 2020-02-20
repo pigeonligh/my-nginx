@@ -52,6 +52,13 @@ func Response(c *gin.Context, status int, msg string, data interface{}) {
 	})
 }
 
+// Redirect function
+func Redirect(c *gin.Context, dest string) {
+	c.Header("Cache-Control", "must-revalidate, no-store")
+	c.Header("Location", dest)
+	c.String(http.StatusTemporaryRedirect, "")
+}
+
 func init() {
 	rand.Seed(time.Now().Unix())
 }

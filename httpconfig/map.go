@@ -13,13 +13,13 @@ func (m *Map) New() int {
 	m.MaxIndex++
 	m.Data[m.MaxIndex] = &Config{
 		Index:        m.MaxIndex,
-		IsHTTPS:      false,
+		IsHTTPS:      true,
 		ServerName:   "unsettled",
 		Available:    false,
-		SSLProtocols: "",
-		SSLCiphers:   "",
+		SSLProtocols: "TLSv1 TLSv1.1 TLSv1.2",
+		SSLCiphers:   "HIGH:!aNULL:!MD5",
 		Rewrite:      "",
-		Locations:    make([]*Location, 0),
+		Locations:    []*Location{&Location{From: "/", To: "http://127.0.0.1:8000/"}},
 	}
 	return m.MaxIndex
 }

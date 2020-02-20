@@ -7,13 +7,13 @@ import (
 	"github.com/pigeonligh/my-nginx/utils"
 )
 
-func getSSL(c *gin.Context) {
+func delSSL(c *gin.Context) {
 	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
 
-	index, err := strconv.Atoi(c.Query("index"))
+	index, err := strconv.Atoi(c.PostForm("index"))
 	if err != nil {
 		utils.Response(c, 0, err.Error(), nil)
 		return
@@ -24,16 +24,18 @@ func getSSL(c *gin.Context) {
 		return
 	}
 
-	utils.Response(c, 1, "", config)
+	delete(Data.SSL.Data, index)
+
+	utils.Response(c, 1, "", nil)
 }
 
-func getHTTP(c *gin.Context) {
+func delHTTP(c *gin.Context) {
 	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
 
-	index, err := strconv.Atoi(c.Query("index"))
+	index, err := strconv.Atoi(c.PostForm("index"))
 	if err != nil {
 		utils.Response(c, 0, err.Error(), nil)
 		return
@@ -44,16 +46,18 @@ func getHTTP(c *gin.Context) {
 		return
 	}
 
-	utils.Response(c, 1, "", config)
+	delete(Data.HTTP.Data, index)
+
+	utils.Response(c, 1, "", nil)
 }
 
-func getStream(c *gin.Context) {
+func delStream(c *gin.Context) {
 	if !CheckLogged(c) {
 		utils.Response(c, 0, "access denied", nil)
 		return
 	}
 
-	index, err := strconv.Atoi(c.Query("index"))
+	index, err := strconv.Atoi(c.PostForm("index"))
 	if err != nil {
 		utils.Response(c, 0, err.Error(), nil)
 		return
@@ -64,11 +68,13 @@ func getStream(c *gin.Context) {
 		return
 	}
 
-	utils.Response(c, 1, "", config)
+	delete(Data.SSL.Data, index)
+
+	utils.Response(c, 1, "", nil)
 }
 
-func setupGET(r *gin.RouterGroup) {
-	r.GET("ssl", getSSL)
-	r.GET("http", getHTTP)
-	r.GET("stream", getStream)
+func setupDEL(r *gin.RouterGroup) {
+	r.POST("ssl", delSSL)
+	r.POST("http", delHTTP)
+	r.POST("stream", delStream)
 }

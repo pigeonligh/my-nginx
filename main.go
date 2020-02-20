@@ -28,31 +28,10 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
+	r.StaticFile("favicon.ico", "./static/favicon.ico")
+	r.LoadHTMLGlob("templates/**")
+
 	ui.Setup(r.Group(""))
 	backend.Setup(r.Group("/apis"))
-
-	/*
-		r.GET("", func(c *gin.Context) {
-			str := "server {\n" +
-				"listen       80 default_server;\n" +
-				"server_name  _;\n" +
-				"location / {\n" +
-				"deny all;\n" +
-				"}\n}"
-
-			path := "/etc/nginx/http.conf.d/test.conf"
-
-			if err := ioutil.WriteFile(path, []byte(str), 0777); err != nil {
-				c.String(http.StatusBadRequest, "bad\n"+err.Error())
-				return
-			}
-			if err := nginx.Reload(); err != nil {
-				c.String(http.StatusBadRequest, "bad\n"+err.Error())
-				return
-			}
-			c.String(http.StatusOK, "test "+token)
-
-		})
-	*/
 	r.Run(":8080")
 }

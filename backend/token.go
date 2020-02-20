@@ -31,8 +31,8 @@ func CheckToken(target string, timeout int64) bool {
 	return result == target
 }
 
-// CheckToken function
-func checkLogged(c *gin.Context) bool {
+// CheckLogged function
+func CheckLogged(c *gin.Context) bool {
 	token, err := c.Cookie("token")
 	if err != nil {
 		return false
@@ -48,8 +48,9 @@ func checkLogged(c *gin.Context) bool {
 	return CheckToken(token, timeout)
 }
 
-func login(c *gin.Context) bool {
-	password := c.DefaultPostForm("password", "")
+// Login Function
+func Login(c *gin.Context) bool {
+	password := c.DefaultQuery("password", "")
 	if password == Token {
 		token, timeout := MakeToken()
 		c.SetCookie("token", token, 3600, "/", "", http.SameSiteDefaultMode, false, false)
@@ -59,30 +60,20 @@ func login(c *gin.Context) bool {
 	return false
 }
 
-func logout(c *gin.Context) {
+// Logout function
+func Logout(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", "", http.SameSiteDefaultMode, false, false)
 	c.SetCookie("timeout", "", -1, "/", "", http.SameSiteDefaultMode, false, false)
 }
 
 func setupToken(r *gin.RouterGroup) {
-	r.POST("login", func(c *gin.Context) {
-		if login(c) {
-			utils.Response(c, 1, "", nil)
-		} else {
-			utils.Response(c, 0, "", nil)
-		}
-	})
 
 	r.GET("check", func(c *gin.Context) {
-		if checkLogged(c) {
+		if CheckLogged(c) {
 			utils.Response(c, 1, "", nil)
 		} else {
 			utils.Response(c, 0, "", nil)
 		}
 	})
 
-	r.GET("logout", func(c *gin.Context) {
-		logout(c)
-		utils.Response(c, 1, "", nil)
-	})
 }
