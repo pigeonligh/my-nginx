@@ -1,4 +1,4 @@
-package post
+package backend
 
 import (
 	"encoding/json"
@@ -12,9 +12,10 @@ import (
 
 // Configs struct
 type Configs struct {
-	HTTP   *httpconfig.Map   `json:"http"`
-	Stream *streamconfig.Map `json:"stream"`
-	SSL    *ssl.Map          `json:"ssl"`
+	NewModify bool              `json:"changed"`
+	HTTP      *httpconfig.Map   `json:"http"`
+	Stream    *streamconfig.Map `json:"stream"`
+	SSL       *ssl.Map          `json:"ssl"`
 }
 
 // Data var

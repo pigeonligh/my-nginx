@@ -5,13 +5,13 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pigeonligh/my-nginx/backend"
 	"github.com/pigeonligh/my-nginx/nginx"
-	"github.com/pigeonligh/my-nginx/post"
 	"github.com/pigeonligh/my-nginx/ui"
 )
 
 func main() {
-	flag.StringVar(&post.Token, "token", "", "control token")
+	flag.StringVar(&backend.Token, "token", "", "control token")
 	flag.Parse()
 
 	if err := nginx.Run(); err != nil {
@@ -19,17 +19,17 @@ func main() {
 		return
 	}
 
-	data, err := post.LoadConfigs()
+	data, err := backend.LoadConfigs()
 	if err != nil {
 		log.Fatal(err)
 	}
-	post.Data = data
+	backend.Data = data
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 
 	ui.Setup(r.Group(""))
-	post.Setup(r.Group("/post"))
+	backend.Setup(r.Group("/apis"))
 
 	/*
 		r.GET("", func(c *gin.Context) {

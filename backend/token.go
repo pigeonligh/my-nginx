@@ -1,4 +1,4 @@
-package post
+package backend
 
 import (
 	"net/http"
@@ -67,22 +67,22 @@ func logout(c *gin.Context) {
 func setupToken(r *gin.RouterGroup) {
 	r.POST("login", func(c *gin.Context) {
 		if login(c) {
-			c.String(http.StatusOK, "1")
+			utils.Response(c, 1, "", nil)
 		} else {
-			c.String(http.StatusOK, "0")
+			utils.Response(c, 0, "", nil)
 		}
 	})
 
 	r.GET("check", func(c *gin.Context) {
 		if checkLogged(c) {
-			c.String(http.StatusOK, "1")
+			utils.Response(c, 1, "", nil)
 		} else {
-			c.String(http.StatusOK, "0")
+			utils.Response(c, 0, "", nil)
 		}
 	})
 
 	r.GET("logout", func(c *gin.Context) {
 		logout(c)
-		c.String(http.StatusOK, "1")
+		utils.Response(c, 1, "", nil)
 	})
 }

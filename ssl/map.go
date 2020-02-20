@@ -1,7 +1,5 @@
 package ssl
 
-import "io"
-
 // Map struct
 type Map struct {
 	MaxIndex int             `json:"max_index"`
@@ -9,16 +7,19 @@ type Map struct {
 }
 
 // New function
-func (m *Map) New(domain string, crt io.Reader, key io.Reader) error {
+func (m *Map) New(domain string, crt []byte, key []byte) (int, error) {
 	m.MaxIndex++
 	m.Data[m.MaxIndex] = &Config{
 		Index:      m.MaxIndex,
 		DomainName: domain,
 	}
-	return m.Data[m.MaxIndex].Save(crt, key)
+	return m.MaxIndex, m.Data[m.MaxIndex].Save(crt, key)
 }
 
 func check(str, domain string) bool {
+	if str == "" {
+		return false
+	}
 	if str[0] == '*' {
 		if len(str) == 1 {
 			return true

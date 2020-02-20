@@ -5,8 +5,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/rand"
+	"net/http"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CheckPath function
@@ -38,6 +41,15 @@ func MD5(text string) string {
 	ctx := md5.New()
 	ctx.Write([]byte(text))
 	return hex.EncodeToString(ctx.Sum(nil))
+}
+
+// Response function
+func Response(c *gin.Context, status int, msg string, data interface{}) {
+	c.JSON(http.StatusOK, gin.H{
+		"status": status,
+		"msg":    msg,
+		"data":   data,
+	})
 }
 
 func init() {

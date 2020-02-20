@@ -7,7 +7,7 @@ type Map struct {
 }
 
 // New function
-func (m *Map) New() {
+func (m *Map) New() int {
 	m.MaxIndex++
 	m.Data[m.MaxIndex] = &Config{
 		Index:          m.MaxIndex,
@@ -16,6 +16,7 @@ func (m *Map) New() {
 		ConnectTimeout: 10,
 		ProxyTimeout:   30,
 	}
+	return m.MaxIndex
 }
 
 // NewMap function

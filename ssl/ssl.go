@@ -1,11 +1,8 @@
 package ssl
 
 import (
-	"io"
-	"os"
+	"io/ioutil"
 	"strconv"
-
-	"github.com/pigeonligh/my-nginx/utils"
 )
 
 // Config struct
@@ -15,26 +12,14 @@ type Config struct {
 }
 
 // Save function
-func (c Config) Save(crt io.Reader, key io.Reader) error {
-	if err := utils.CheckPath(c.GetDirPath()); err != nil {
-		return err
-	}
-	crtFile, err := os.OpenFile(c.GetCrtPath(), os.O_WRONLY, 0777)
+func (c Config) Save(crt []byte, key []byte) error {
+	var err error
+	err = ioutil.WriteFile(c.GetCrtPath(), crt, 0777)
 	if err != nil {
 		return err
 	}
-	defer crtFile.Close()
-
-	keyFile, err := os.OpenFile(c.GetKeyPath(), os.O_WRONLY, 0777)
+	err = ioutil.WriteFile(c.GetKeyPath(), key, 0777)
 	if err != nil {
-		return err
-	}
-	defer keyFile.Close()
-
-	if _, err := io.Copy(crtFile, crt); err != nil {
-		return err
-	}
-	if _, err := io.Copy(keyFile, crt); err != nil {
 		return err
 	}
 	return nil
@@ -42,17 +27,18 @@ func (c Config) Save(crt io.Reader, key io.Reader) error {
 
 // GetDirPath function
 func (c Config) GetDirPath() string {
-	dir := "/etc/nginx/certs/" + strconv.Itoa(c.Index) + "/"
-	utils.CheckPath(dir)
+	dir := "/etc/nginx/certs/" + strconv.Itoa(c.Index) + "."
 	return dir
 }
 
 // GetCrtPath function
 func (c Config) GetCrtPath() string {
-	return c.GetDirPath() + "ssl.crt"
+	dir := c.GetDirPath()
+	return dir + "ssl.crt"
 }
 
 // GetKeyPath function
 func (c Config) GetKeyPath() string {
-	return c.GetKeyPath() + "ssl.key"
+	dir := c.GetDirPath()
+	return dir + "ssl.key"
 }
