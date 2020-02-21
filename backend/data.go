@@ -56,12 +56,12 @@ func LoadConfigs() (*Configs, error) {
 	if err != nil {
 		return nil, err
 	}
-	var configs *Configs
-	err = json.Unmarshal(data, configs)
+	var configs Configs
+	err = json.Unmarshal(data, &configs)
 	if err != nil {
 		return nil, err
 	}
-	return configs, nil
+	return &configs, nil
 }
 
 // Apply function
