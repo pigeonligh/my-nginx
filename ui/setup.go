@@ -54,11 +54,11 @@ func Setup(r *gin.RouterGroup) {
 		}
 
 		if err := backend.Data.Apply(); err != nil {
-			c.String(http.StatusConflict, "<pre>Error: \n"+err.Error())
+			c.String(http.StatusConflict, "Error: \n"+err.Error())
 			return
 		}
 		if err := backend.Data.Save(); err != nil {
-			c.String(http.StatusConflict, "<pre>Error: \n"+err.Error())
+			c.String(http.StatusConflict, "Error: \n"+err.Error())
 			return
 		}
 		utils.Redirect(c, "./success")
@@ -72,6 +72,19 @@ func Setup(r *gin.RouterGroup) {
 		}
 
 		c.HTML(http.StatusOK, "success.html", gin.H{
+			"title":  "My Nginx",
+			"logged": logged,
+		})
+	})
+
+	r.POST("saved", func(c *gin.Context) {
+		logged := backend.CheckLogged(c)
+		if !logged {
+			utils.Redirect(c, "./login")
+			return
+		}
+
+		c.HTML(http.StatusOK, "saved.html", gin.H{
 			"title":  "My Nginx",
 			"logged": logged,
 		})

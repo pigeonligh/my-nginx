@@ -3,7 +3,6 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"os"
@@ -19,7 +18,6 @@ func CheckPath(path string) error {
 		return nil
 	}
 	if os.IsNotExist(err) {
-		fmt.Println("create dir " + path)
 		return os.Mkdir(path, 0777)
 	}
 	return err

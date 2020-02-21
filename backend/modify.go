@@ -44,7 +44,7 @@ func modifySSL(c *gin.Context) {
 		utils.Response(c, 0, err.Error(), nil)
 		return
 	}
-	utils.Response(c, 1, "success", nil)
+	utils.Redirect(c, "./../../saved")
 }
 
 func modifyHTTP(c *gin.Context) {
@@ -108,7 +108,7 @@ func modifyHTTP(c *gin.Context) {
 		utils.Response(c, 0, err.Error(), nil)
 		return
 	}
-	utils.Response(c, 1, "success", nil)
+	utils.Redirect(c, "./../../saved")
 }
 
 func modifyStream(c *gin.Context) {
@@ -160,7 +160,7 @@ func modifyStream(c *gin.Context) {
 		utils.Response(c, 0, err.Error(), nil)
 		return
 	}
-	utils.Response(c, 1, "success", nil)
+	utils.Redirect(c, "./../../saved")
 }
 
 func setupModify(r *gin.RouterGroup) {

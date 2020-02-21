@@ -1,6 +1,11 @@
 package httpconfig
 
-import "github.com/pigeonligh/my-nginx/ssl"
+import (
+	"os"
+
+	"github.com/pigeonligh/my-nginx/ssl"
+	"github.com/pigeonligh/my-nginx/utils"
+)
 
 // Map struct
 type Map struct {
@@ -34,6 +39,14 @@ func NewMap() *Map {
 
 // Apply function
 func (m *Map) Apply(sslMap *ssl.Map) error {
+	err := os.RemoveAll("/etc/nginx/http.conf.d")
+	if err != nil {
+		return err
+	}
+	err = utils.CheckPath("/etc/nginx/http.conf.d")
+	if err != nil {
+		return err
+	}
 	for _, config := range m.Data {
 		err := config.WriteConfig(sslMap)
 		if err != nil {
