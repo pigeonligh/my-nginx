@@ -25,7 +25,7 @@ docker run -d --restart=always -p 80:80 -p 443:443 -p 12345:8080 --name="my-ngin
 
 其中 `MANAGE_TOKEN` 为登录口令，`12345` 可以改为其他端口，该端口用于管理 Nginx 配置。
 
-然后在浏览器访问 IP:12345 就能进行 Nginx 配置。
+然后在浏览器访问 `IP:12345` 就能进行 Nginx 配置。
 
 ### 配置持久化
 
