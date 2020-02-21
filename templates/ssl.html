@@ -1,0 +1,94 @@
+{{template "header" .}}
+<div class="text-center">
+<h1 class="">{{ .title }}</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+        </div>
+        <div class="col-sm-6">
+            <div class="accordion" id="main_accordion">
+                {{ range .list }}
+                <div class="card" id="card-{{ .index }}">
+                    <div class="card-header" id="heading-{{ .index }}">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-{{ .index }}" aria-expanded="true" aria-controls="collapse-{{ .index }}">
+                        {{ .domain }}
+                        </button>
+                    </h2>
+                    </div>
+
+                    <div id="collapse-{{ .index }}" class="collapse" aria-labelledby="heading-{{ .index }}" data-parent="#main_accordion">
+                        <form style="padding:10px" method="post" action="./apis/modify/ssl">
+                            <input type="hidden" name="index" value="{{ .index }}">
+                            <div class="form-group">
+                                <label for="domain-{{ .index }}">域名：</label>
+                                <input type="input" class="form-control" id="domain-{{ .index }}" name="domain" value="{{ .domain }}">
+                                <small class="form-text text-muted">支持以通配符 * 开头，例如 *.google.com </small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="crt-{{ .index }}">更新 CRT</label>
+                                <input type='file' accept='*' onchange="open_file(event, '#crt-{{ .index }}')">
+                                <textarea class="form-control" id="crt-{{ .index }}" name="crt" rows="10"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="key-{{ .index }}">更新 KEY</label>
+                                <input type='file' accept='*' onchange="open_file(event, '#key-{{ .index }}')">
+                                <textarea class="form-control" id="key-{{ .index }}" name="key" rows="10"></textarea>
+                                <small class="form-text text-muted">只有当 crt 和 key 都非空时才会应用更新。</small>
+                            </div>
+
+                            <br/>
+                            <button type="submit" class="btn btn-primary">保存</button>
+                            <button type="reset" class="btn btn-primary" onclick="remove({{ .index }});return false;">删除</button>
+                        </form>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+            <br/>
+            <button type="button" class="btn btn-primary" style="float:right;" onclick="click_add()">Add</button>
+        </div>
+        <div class="col-sm-3">
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(window).load(function() {
+        $(location.hash).collapse("show");
+    });
+
+    function open_file(event, id) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function() {
+            if(reader.result) {
+                $(id).val(reader.result);
+            }
+        };
+        if (input.files != [])
+            reader.readAsText(input.files[0]);
+    }
+    
+    function remove(index) {
+        $.post("./apis/del/ssl", {index:index}, function(data, status) {
+            window.location.href="#";
+            window.location.reload();
+        });
+    }
+    
+    function click_add()
+    {
+        $.post("./apis/add/ssl", {domain:"unsettled"}, function(data, status) {
+            window.location.href="#collapse-" + data["msg"];
+            window.location.reload();
+        });
+    }
+</script>
+
+{{template "footer" .}}
