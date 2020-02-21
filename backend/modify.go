@@ -27,16 +27,18 @@ func modifySSL(c *gin.Context) {
 		return
 	}
 
-	crt := []byte(c.PostForm("crt"))
-	key := []byte(c.PostForm("key"))
+	crt := c.PostForm("crt")
+	key := c.PostForm("key")
 	domain := c.PostForm("domain")
 
 	config.DomainName = domain
-	err = config.Save(crt, key)
 	Data.NewModify = true
-	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
+	if crt != "" && key != "" {
+		err = config.Save([]byte(crt), []byte(key))
+		if err != nil {
+			utils.Response(c, 0, err.Error(), nil)
+			return
+		}
 	}
 	if err = Data.Save(); err != nil {
 		utils.Response(c, 0, err.Error(), nil)

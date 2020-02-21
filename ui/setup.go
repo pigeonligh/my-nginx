@@ -79,7 +79,5 @@ func Setup(r *gin.RouterGroup) {
 
 	r.GET("http", httpPage)
 
-	r.GET("port", portPage)
-
 	r.GET("ssl", sslPage)
 }

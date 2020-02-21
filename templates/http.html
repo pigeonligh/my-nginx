@@ -30,6 +30,7 @@
                                 <input class="form-check-input" type="radio" name="is_https" id="isHTTPS-{{ .index }}" value="true" {{ with .is_https }}checked{{ end }}>
                                 <label class="form-check-label" for="isHTTPS-{{ .index }}">HTTPS</label>
                             </div>
+                            <small class="form-text text-muted">使用 HTTPS 时请配置好 SSL 证书，否则配置将应用失败！</small>
                             <div class="form-group">
                                 <label for="servername-{{ .index }}">域名：</label>
                                 <input type="input" class="form-control" id="servername-{{ .index }}" name="server_name" value="{{ .server_name }}">

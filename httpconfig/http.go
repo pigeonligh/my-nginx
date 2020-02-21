@@ -35,8 +35,8 @@ func (c Config) WriteConfig(sslMap *ssl.Map) error {
 
 		sslConfig := sslMap.Find(c.ServerName)
 		if sslConfig != nil {
-			data = fmt.Sprintf("%s\n ssl_certificate %s;", data, "")
-			data = fmt.Sprintf("%s\n ssl_certificate_key %s;", data, "")
+			data = fmt.Sprintf("%s\n ssl_certificate %s;", data, sslConfig.GetCrtPath())
+			data = fmt.Sprintf("%s\n ssl_certificate_key %s;", data, sslConfig.GetKeyPath())
 			if c.SSLProtocols != "" {
 				data = fmt.Sprintf("%s\n ssl_protocols %s;", data, c.SSLProtocols)
 			}
