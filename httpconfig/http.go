@@ -53,7 +53,7 @@ func (c Config) WriteConfig(sslMap *ssl.Map) error {
 			data = fmt.Sprintf("%s\n rewrite ^/(.*)$ %s/$1 permanent;", data, c.Rewrite)
 		} else {
 			for _, location := range c.Locations {
-				data = fmt.Sprintf("%s\n %s", data, location.WriteString())
+				data = fmt.Sprintf("%s\n %s", data, location.WriteString(true))
 			}
 		}
 	} else {
