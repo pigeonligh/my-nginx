@@ -9,7 +9,7 @@ type Location struct {
 }
 
 // WriteString function
-func (c Location) WriteString() string {
+func (c Location) WriteString(openWS bool) string {
 	var data string = ""
 	data = fmt.Sprintf("%s\n location %s {", data, c.From)
 	data = fmt.Sprintf("%s\n proxy_pass %s;", data, c.To)
@@ -18,6 +18,11 @@ func (c Location) WriteString() string {
 	data = fmt.Sprintf("%s\n proxy_set_header REMOTE-HOST $remote_addr;", data)
 	data = fmt.Sprintf("%s\n proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;", data)
 	data = fmt.Sprintf("%s\n proxy_set_header Via \"my-nginx\";", data)
-	data = fmt.Sprintf("%s\n }\n", data)
+	if openWS {
+		data = fmt.Sprintf("%s\n proxy_http_version 1.1;", data)
+		data = fmt.Sprintf("%s\n proxy_set_header Upgrade $http_upgrade;", data)
+		data = fmt.Sprintf("%s\n proxy_set_header Connection \"upgrade\";", data)
+		data = fmt.Sprintf("%s\n }\n", data)
+	}
 	return data
 }
