@@ -5,85 +5,33 @@
 <br/>
 <div class="container">
     <div class="row">
-        <div class="col-sm-3">
-        </div>
-        <div class="col-sm-6">
-            <div class="accordion" id="main_accordion">
-                {{ range .list }}
-                <div class="card" id="card-{{ .index }}">
-                    <div class="card-header" id="heading-{{ .index }}">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse-{{ .index }}" aria-expanded="true" aria-controls="collapse-{{ .index }}">
-                        {{ .name }}
-                        </button>
-                    </h2>
-                    </div>
-
-                    <div id="collapse-{{ .index }}" class="collapse" aria-labelledby="heading-{{ .index }}" data-parent="#main_accordion">
-                        <form style="padding:10px" method="post" action="./apis/modify/http">
-                            <input type="hidden" name="index" value="{{ .index }}">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="is_https" id="isHTTP-{{ .index }}" value="false" {{ with .is_http }}checked{{ end }}>
-                                <label class="form-check-label" for="isHTTP-{{ .index }}">HTTP</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="is_https" id="isHTTPS-{{ .index }}" value="true" {{ with .is_https }}checked{{ end }}>
-                                <label class="form-check-label" for="isHTTPS-{{ .index }}">HTTPS</label>
-                            </div>
-                            <small class="form-text text-muted">使用 HTTPS 时请配置好 SSL 证书，否则配置将应用失败！</small>
-                            <div class="form-group">
-                                <label for="servername-{{ .index }}">域名：</label>
-                                <input type="input" class="form-control" id="servername-{{ .index }}" name="server_name" value="{{ .server_name }}">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="protocols-{{ .index }}">SSLProtocols（仅在 HTTPS 时需要）：</label>
-                                <input type="input" class="form-control" id="protocols-{{ .index }}" name="ssl_protocols" value="{{ .protocols }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="ciphers-{{ .index }}">SSLCiphers（仅在 HTTPS 时需要）：</label>
-                                <input type="input" class="form-control" id="ciphers-{{ .index }}" name="ssl_ciphers" value="{{ .ciphers }}">
-                            </div>
-                            <div class="form-group">
-                                <label for="rewrite-{{ .index }}">Rewrite：</label>
-                                <input type="input" class="form-control" id="rewrite-{{ .index }}" name="rewrite" value="{{ .rewrite }}">
-                                <small class="form-text text-muted">Format: http://www.google.com（没有 / ）</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="locations-{{ .index }}">Locations：（在填写 Rewrite 时失效）</label>
-                                <textarea class="form-control" id="locations-{{ .index }}" name="locations" rows="10">{{ .locations }}</textarea>
-                                <small class="form-text text-muted">参考默认 JSON 包格式！</small>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="available-{{ .index }}" name="available" value="true"  {{ with .available }}checked{{ end }}>
-                                <label class="form-check-label" for="available-{{ .index }}">
-                                    启用
-                                </label>
-                            </div>
-                            <br/>
-                            <button type="submit" class="btn btn-primary">保存</button>
-                            <button type="reset" class="btn btn-primary" onclick="remove({{ .index }});return false;">删除</button>
-                        </form>
-                    </div>
-                </div>
-                {{ end }}
-            </div>
+        <div class="col-sm">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range .list }}
+                    <tr>
+                        <td><a href="http_modify?i={{ .index }}">{{ .name }}</a></th>
+                        <td><button class="btn btn-primary" onclick="remove({{ .index }});return false;">删除</button></td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
             <br/>
             <button type="button" class="btn btn-primary" style="float:right;" onclick="click_add()">Add</button>
-        </div>
-        <div class="col-sm-3">
         </div>
     </div>
 </div>
 
 <script>
-$(window).load(function() {
-    $(location.hash).collapse("show");
-});
 
 function remove(index) {
     $.post("./apis/del/http", {index:index}, function(data, status) {
-        window.location.href="#";
         window.location.reload();
     });
 }
@@ -91,8 +39,7 @@ function remove(index) {
 function click_add()
 {
     $.post("./apis/add/http", function(data, status) {
-        window.location.href="#collapse-" + data["msg"];
-        window.location.reload();
+        window.location.href = "http_modify?i=" + data.msg
     });
 }
 </script>

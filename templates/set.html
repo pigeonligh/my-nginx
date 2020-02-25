@@ -1,0 +1,14 @@
+{{template "header" .}}
+{{ with .success }}
+<div class="text-center">
+<h1 class="">配置成功</h1>
+</div>
+{{ end }}
+
+{{ with .msg }}
+<div class="text-center">
+<p>{{ . }}</p>
+</div>
+{{ end }}
+
+{{template "footer" .}}

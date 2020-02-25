@@ -1,7 +1,7 @@
 package nginx
 
 import (
-	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 
@@ -20,17 +20,23 @@ func Run() error {
 		return err
 	}
 
-	dst, err := os.OpenFile("/etc/nginx/nginx.conf", os.O_WRONLY, 0666)
-	if err != nil {
-		return err
-	}
-	defer dst.Close()
+	/*
+		dst, err := os.OpenFile("/etc/nginx/nginx.conf", os.O_WRONLY, 0666)
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+	*/
 	src, err := os.Open("nginx/nginx.conf")
 	if err != nil {
 		return err
 	}
 	defer src.Close()
-	_, err = io.Copy(dst, src)
+	bytes, err := ioutil.ReadAll(src)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile("/etc/nginx/nginx.conf", bytes, 0666)
 	if err != nil {
 		return err
 	}

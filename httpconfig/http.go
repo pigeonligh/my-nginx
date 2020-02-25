@@ -11,9 +11,10 @@ import (
 // Config struct
 type Config struct {
 	Index        int         `json:"index"`
-	IsHTTPS      bool        `json:"is_https"`
+	IsHTTPS      bool        `json:"is_https" default:"true"`
+	HTTPAttach   int         `json:"http_attach" defalut:"0"`
 	ServerName   string      `json:"server_name"`
-	Available    bool        `json:"available"`
+	Available    bool        `json:"available" defalut:"false"`
 	SSLProtocols string      `json:"ssl_protocols"`
 	SSLCiphers   string      `json:"ssl_ciphers"`
 	Rewrite      string      `json:"rewrite"`
@@ -29,6 +30,7 @@ func (c Config) WriteConfig(sslMap *ssl.Map) error {
 	}
 
 	var data string = ""
+	var body string = ""
 	data = fmt.Sprintf("%s\nserver {", data)
 	if c.IsHTTPS {
 		data = fmt.Sprintf("%s\n listen 443 ssl%s;", data, defaultString)
@@ -50,16 +52,48 @@ func (c Config) WriteConfig(sslMap *ssl.Map) error {
 	data = fmt.Sprintf("%s\n server_name %s;", data, c.ServerName)
 	if c.Available {
 		if c.Rewrite != "" {
-			data = fmt.Sprintf("%s\n rewrite ^/(.*)$ %s/$1 permanent;", data, c.Rewrite)
+			body = fmt.Sprintf("%s\n rewrite ^/(.*)$ %s/$1 permanent;", body, c.Rewrite)
 		} else {
 			for _, location := range c.Locations {
-				data = fmt.Sprintf("%s\n %s", data, location.WriteString(true))
+				body = fmt.Sprintf("%s\n %s", body, location.WriteString())
 			}
 		}
 	} else {
-		data = fmt.Sprintf("%s\n location / {\n  deny all;\n }", data)
+		body = fmt.Sprintf("%s\n location / {\n  deny all;\n }", body)
 	}
+	data = fmt.Sprintf("%s\n%s", data, body)
 	data = fmt.Sprintf("%s\n}\n", data)
 
+	if c.IsHTTPS && c.HTTPAttach > 0 {
+		data = fmt.Sprintf("%s\nserver {", data)
+		data = fmt.Sprintf("%s\n listen 80%s;", data, defaultString)
+		data = fmt.Sprintf("%s\n server_name %s;", data, c.ServerName)
+		if c.Available {
+			if c.HTTPAttach == 1 {
+				data = fmt.Sprintf("%s\n rewrite ^/(.*)$ https://%s/$1 permanent;", data, c.ServerName)
+			} else {
+				data = fmt.Sprintf("%s\n %s", data, body)
+			}
+		} else {
+			data = fmt.Sprintf("%s\n location / {\n  deny all;\n }", data)
+		}
+		data = fmt.Sprintf("%s\n}\n", data)
+	}
+
 	return ioutil.WriteFile(filename, []byte(data), 0666)
+}
+
+// NewConfig function
+func NewConfig(index int) *Config {
+	return &Config{
+		Index:        index,
+		IsHTTPS:      true,
+		HTTPAttach:   0,
+		ServerName:   "unsettled",
+		Available:    false,
+		SSLProtocols: "TLSv1 TLSv1.1 TLSv1.2",
+		SSLCiphers:   "HIGH:!aNULL:!MD5",
+		Rewrite:      "",
+		Locations:    []*Location{&Location{From: "/", To: "http://127.0.0.1:8000/", WebSocket: true}},
+	}
 }

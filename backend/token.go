@@ -50,7 +50,7 @@ func CheckLogged(c *gin.Context) bool {
 
 // Login Function
 func Login(c *gin.Context) bool {
-	password := c.DefaultQuery("password", "")
+	password := c.DefaultPostForm("password", "")
 	if password == Token {
 		token, timeout := MakeToken()
 		c.SetCookie("token", token, 3600, "/", "", http.SameSiteDefaultMode, false, false)
@@ -67,7 +67,6 @@ func Logout(c *gin.Context) {
 }
 
 func setupToken(r *gin.RouterGroup) {
-
 	r.GET("check", func(c *gin.Context) {
 		if CheckLogged(c) {
 			utils.Response(c, 1, "", nil)
@@ -75,5 +74,11 @@ func setupToken(r *gin.RouterGroup) {
 			utils.Response(c, 0, "", nil)
 		}
 	})
-
+	r.POST("checklogin", func(c *gin.Context) {
+		if Login(c) {
+			utils.Response(c, 1, "", nil)
+		} else {
+			utils.Response(c, 0, "", nil)
+		}
+	})
 }

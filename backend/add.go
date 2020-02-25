@@ -1,16 +1,16 @@
 package backend
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pigeonligh/my-nginx/utils"
 )
 
-func newSSL(c *gin.Context) {
+func newSSL(c *gin.Context) gin.H {
 	if !CheckLogged(c) {
-		utils.Response(c, 0, "access denied", nil)
-		return
+		return utils.HAccessDenied()
 	}
 
 	crt := []byte(c.PostForm("crt"))
@@ -18,50 +18,32 @@ func newSSL(c *gin.Context) {
 	domain := c.PostForm("domain")
 
 	index, err := Data.SSL.New(domain, crt, key)
-	Data.NewModify = true
 	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
+		return utils.HError(err)
 	}
 	if err = Data.Save(); err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
+		return utils.HError(err)
 	}
-	utils.Response(c, 1, strconv.Itoa(index), nil)
+	return utils.HResponse(strconv.Itoa(index), nil)
 }
 
-func newHTTP(c *gin.Context) {
+func newHTTP(c *gin.Context) gin.H {
 	if !CheckLogged(c) {
-		utils.Response(c, 0, "access denied", nil)
-		return
+		return utils.HAccessDenied()
 	}
 
 	index := Data.HTTP.New()
-	Data.NewModify = true
 	if err := Data.Save(); err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
+		return utils.HError(err)
 	}
-	utils.Response(c, 1, strconv.Itoa(index), nil)
-}
-
-func newStream(c *gin.Context) {
-	if !CheckLogged(c) {
-		utils.Response(c, 0, "access denied", nil)
-		return
-	}
-
-	index := Data.Stream.New()
-	Data.NewModify = true
-	if err := Data.Save(); err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
-	}
-	utils.Response(c, 1, strconv.Itoa(index), nil)
+	return utils.HResponse(strconv.Itoa(index), nil)
 }
 
 func setupAdd(r *gin.RouterGroup) {
-	r.POST("ssl", newSSL)
-	r.POST("http", newHTTP)
-	r.POST("stream", newStream)
+	r.POST("ssl", func(c *gin.Context) {
+		c.JSON(http.StatusOK, newSSL(c))
+	})
+	r.POST("http", func(c *gin.Context) {
+		c.JSON(http.StatusOK, newHTTP(c))
+	})
 }

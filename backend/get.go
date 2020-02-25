@@ -1,74 +1,52 @@
 package backend
 
 import (
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pigeonligh/my-nginx/utils"
 )
 
-func getSSL(c *gin.Context) {
+func getSSL(c *gin.Context) gin.H {
 	if !CheckLogged(c) {
-		utils.Response(c, 0, "access denied", nil)
-		return
+		return utils.HAccessDenied()
 	}
 
 	index, err := strconv.Atoi(c.Query("index"))
 	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
+		return utils.HError(err)
 	}
 	config := Data.SSL.Data[index]
 	if config == nil {
-		utils.Response(c, 0, "config not exists", nil)
-		return
+		return utils.HWarning("config not exists")
 	}
 
-	utils.Response(c, 1, "", config)
+	return utils.HResponse("", config)
 }
 
-func getHTTP(c *gin.Context) {
+func getHTTP(c *gin.Context) gin.H {
 	if !CheckLogged(c) {
-		utils.Response(c, 0, "access denied", nil)
-		return
+		return utils.HAccessDenied()
 	}
 
 	index, err := strconv.Atoi(c.Query("index"))
 	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
+		return utils.HError(err)
 	}
 	config := Data.HTTP.Data[index]
 	if config == nil {
-		utils.Response(c, 0, "config not exists", nil)
-		return
+		return utils.HWarning("config not exists")
 	}
 
-	utils.Response(c, 1, "", config)
-}
-
-func getStream(c *gin.Context) {
-	if !CheckLogged(c) {
-		utils.Response(c, 0, "access denied", nil)
-		return
-	}
-
-	index, err := strconv.Atoi(c.Query("index"))
-	if err != nil {
-		utils.Response(c, 0, err.Error(), nil)
-		return
-	}
-	config := Data.Stream.Data[index]
-	if config == nil {
-		utils.Response(c, 0, "config not exists", nil)
-		return
-	}
-
-	utils.Response(c, 1, "", config)
+	return utils.HResponse("", config)
 }
 
 func setupGET(r *gin.RouterGroup) {
-	r.GET("ssl", getSSL)
-	r.GET("http", getHTTP)
-	r.GET("stream", getStream)
+	r.GET("ssl", func(c *gin.Context) {
+		c.JSON(http.StatusOK, getSSL(c))
+	})
+	r.GET("http", func(c *gin.Context) {
+		c.JSON(http.StatusOK, getHTTP(c))
+	})
 }
