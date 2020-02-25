@@ -50,6 +50,13 @@ func Response(c *gin.Context, status int, msg string, data interface{}) {
 	})
 }
 
+// Error404 function
+func Error404(c *gin.Context) {
+	c.HTML(http.StatusNotFound, "error.html", gin.H{
+		"title": "404 Not Found",
+	})
+}
+
 // Redirect function
 func Redirect(c *gin.Context, dest string) {
 	c.Header("Cache-Control", "must-revalidate, no-store")

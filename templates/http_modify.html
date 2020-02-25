@@ -1,0 +1,135 @@
+{{template "header" .}}
+<div class="text-center">
+<h1 class="">配置</h1>
+{{ with .config }}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <form style="padding:10px" method="post" action="./apis/modify/http">
+                <input type="hidden" name="index" value="{{ .index }}">
+                <label>类型：</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="is_https" id="isHTTP" value="false" {{ with .is_http }}checked{{ end }}>
+                    <label class="form-check-label" for="isHTTP">HTTP</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="is_https" id="isHTTPS" value="true" {{ with .is_https }}checked{{ end }}>
+                    <label class="form-check-label" for="isHTTPS">HTTPS</label>
+                </div>
+                <p></p>
+                <div id="https_attach">
+                    <label>拓展：</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="http_attach" id="attach_none" value="0" {{ with .http_none }}checked{{ end }}>
+                        <label class="form-check-label" for="attach_none">无拓展</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="http_attach" id="attach_rewrite" value="1" {{ with .http_rewrite }}checked{{ end }}>
+                        <label class="form-check-label" for="attach_rewrite">HTTP 重写至 HTTPS</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="http_attach" id="attach_copy" value="2" {{ with .http_copy }}checked{{ end }}>
+                        <label class="form-check-label" for="attach_copy">创建相同的 HTTP 配置</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <small class="form-text text-muted">使用 HTTPS 时请配置好 SSL 证书，否则配置将应用失败！</small>
+                </div>
+                <p></p>
+
+                <div class="form-group">
+                    <label for="servername">域名：</label>
+                    <input type="input" class="form-control" id="servername" name="server_name" value="{{ .server_name }}">
+                </div>
+                
+                <div id="https_attach2">
+                    <div class="form-group">
+                        <label for="protocols">SSLProtocols：</label>
+                        <input type="input" class="form-control" id="protocols" name="ssl_protocols" value="{{ .protocols }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="ciphers">SSLCiphers：</label>
+                        <input type="input" class="form-control" id="ciphers" name="ssl_ciphers" value="{{ .ciphers }}">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rewrite">Rewrite：</label>
+                    <input type="input" class="form-control" id="rewrite" name="rewrite" value="{{ .rewrite }}">
+                    <small class="form-text text-muted">Format: http://www.google.com（没有 / ）</small>
+                </div>
+                <div class="form-group">
+                    <label for="locations">Locations：（在填写 Rewrite 时失效）</label>
+                    <textarea class="form-control" id="locations" name="locations" rows="10">{{ .locations }}</textarea>
+                    <small class="form-text text-muted">参考默认 JSON 包格式！</small>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="available" name="available" value="true"  {{ with .available }}checked{{ end }}>
+                    <label class="form-check-label" for="available">
+                        启用
+                    </label>
+                </div>
+                <br/>
+                <button type="submit" class="btn btn-primary" onclick="return click_save()">保存</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(window).load(function() {
+        {{ with .is_http }}
+        $("#https_attach").hide();
+        $("#https_attach2").hide();
+        {{ end }}
+    });
+
+    $('input[name="is_https"]').click(function(){
+        if ($(this).val() == "true") {
+            $("#https_attach").show();
+            $("#https_attach2").show();
+        } else {
+            $("#https_attach").hide();
+            $("#https_attach2").hide();
+        }
+    });
+
+    function click_save() {
+        var index = $('input[name="index"]').val();
+        var is_https = $('input[name="is_https"]:checked').val();
+        var http_attach = $('input[name="http_attach"]:checked').val();
+        var server_name = $('input[name="server_name"]').val();
+        var ssl_protocols = $('input[name="ssl_protocols"]').val();
+        var ssl_ciphers = $('input[name="ssl_ciphers"]').val();
+        var rewrite = $('input[name="rewrite"]').val();
+        var locations = $('#locations').val();
+        var available = $('#available:checked').val();
+        
+        $.post("./apis/modify/http", 
+            {
+                'index': index,
+                'is_https': is_https,
+                'http_attach': http_attach,
+                'server_name': server_name,
+                'ssl_protocols': ssl_protocols,
+                'ssl_ciphers': ssl_ciphers,
+                'rewrite': rewrite,
+                'locations': locations,
+                'available': available
+            }, function(data, status) {
+                if (data.status == 1) {
+                    window.location.reload();
+                } else {
+                    alert("failed");
+                }
+            }
+        );
+
+        return false;
+    }
+</script>
+{{ end }}
+
+{{template "footer" .}}

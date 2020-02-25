@@ -16,16 +16,7 @@ type Map struct {
 // New function
 func (m *Map) New() int {
 	m.MaxIndex++
-	m.Data[m.MaxIndex] = &Config{
-		Index:        m.MaxIndex,
-		IsHTTPS:      true,
-		ServerName:   "unsettled",
-		Available:    false,
-		SSLProtocols: "TLSv1 TLSv1.1 TLSv1.2",
-		SSLCiphers:   "HIGH:!aNULL:!MD5",
-		Rewrite:      "",
-		Locations:    []*Location{&Location{From: "/", To: "http://127.0.0.1:8000/"}},
-	}
+	m.Data[m.MaxIndex] = NewConfig(m.MaxIndex)
 	return m.MaxIndex
 }
 

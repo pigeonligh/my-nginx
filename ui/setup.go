@@ -33,14 +33,6 @@ func Setup(r *gin.RouterGroup) {
 		})
 	})
 
-	r.GET("checklogin", func(c *gin.Context) {
-		if backend.Login(c) {
-			utils.Redirect(c, "./login")
-		} else {
-			utils.Redirect(c, "./login?type=error")
-		}
-	})
-
 	r.GET("logout", func(c *gin.Context) {
 		backend.Logout(c)
 		utils.Redirect(c, "./login")
@@ -54,43 +46,31 @@ func Setup(r *gin.RouterGroup) {
 		}
 
 		if err := backend.Data.Apply(); err != nil {
-			c.String(http.StatusConflict, "Error: \n"+err.Error())
+			c.HTML(http.StatusOK, "set.html", gin.H{
+				"title":  "My Nginx",
+				"logged": logged,
+				"error":  err.Error(),
+			})
 			return
 		}
 		if err := backend.Data.Save(); err != nil {
-			c.String(http.StatusConflict, "Error: \n"+err.Error())
-			return
-		}
-		utils.Redirect(c, "./success")
-	})
-
-	r.GET("success", func(c *gin.Context) {
-		logged := backend.CheckLogged(c)
-		if !logged {
-			utils.Redirect(c, "./login")
+			c.HTML(http.StatusOK, "set.html", gin.H{
+				"title":  "My Nginx",
+				"logged": logged,
+				"error":  err.Error(),
+			})
 			return
 		}
 
-		c.HTML(http.StatusOK, "success.html", gin.H{
-			"title":  "My Nginx",
-			"logged": logged,
-		})
-	})
-
-	r.POST("saved", func(c *gin.Context) {
-		logged := backend.CheckLogged(c)
-		if !logged {
-			utils.Redirect(c, "./login")
-			return
-		}
-
-		c.HTML(http.StatusOK, "saved.html", gin.H{
-			"title":  "My Nginx",
-			"logged": logged,
+		c.HTML(http.StatusOK, "set.html", gin.H{
+			"title":   "My Nginx",
+			"logged":  logged,
+			"success": true,
 		})
 	})
 
 	r.GET("http", httpPage)
+	r.GET("http_modify", httpModify)
 
 	r.GET("ssl", sslPage)
 }

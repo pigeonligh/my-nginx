@@ -8,15 +8,12 @@ import (
 	"github.com/pigeonligh/my-nginx/httpconfig"
 	"github.com/pigeonligh/my-nginx/nginx"
 	"github.com/pigeonligh/my-nginx/ssl"
-	"github.com/pigeonligh/my-nginx/streamconfig"
 )
 
 // Configs struct
 type Configs struct {
-	NewModify bool              `json:"changed"`
-	HTTP      *httpconfig.Map   `json:"http"`
-	Stream    *streamconfig.Map `json:"stream"`
-	SSL       *ssl.Map          `json:"ssl"`
+	HTTP *httpconfig.Map `json:"http"`
+	SSL  *ssl.Map        `json:"ssl"`
 }
 
 // Data var
@@ -34,9 +31,8 @@ func (c *Configs) Save() error {
 // NewConfigs function
 func NewConfigs() *Configs {
 	configs := &Configs{
-		HTTP:   httpconfig.NewMap(),
-		Stream: streamconfig.NewMap(),
-		SSL:    ssl.NewMap(),
+		HTTP: httpconfig.NewMap(),
+		SSL:  ssl.NewMap(),
 	}
 	configs.Save()
 	return configs
@@ -66,15 +62,8 @@ func LoadConfigs() (*Configs, error) {
 
 // Apply function
 func (c *Configs) Apply() error {
-	if !c.NewModify {
-		return nil
-	}
 	var err error
 	err = c.HTTP.Apply(c.SSL)
-	if err != nil {
-		return err
-	}
-	err = c.Stream.Apply()
 	if err != nil {
 		return err
 	}
@@ -82,6 +71,5 @@ func (c *Configs) Apply() error {
 	if err != nil {
 		return err
 	}
-	c.NewModify = false
 	return nil
 }
