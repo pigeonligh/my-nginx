@@ -82,6 +82,8 @@ docker rm my-nginx
 
 ## 更新
 
+- 2020/2/28：修复了 Websocket 为 false 而导致的错误
+
 - 2020/2/25：优化界面，添加 HTTP 转发至 HTTPS 选项
 
 - 2020/2/23：添加 WebSocket 支持

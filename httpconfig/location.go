@@ -23,7 +23,7 @@ func (c Location) WriteString() string {
 		data = fmt.Sprintf("%s\n proxy_http_version 1.1;", data)
 		data = fmt.Sprintf("%s\n proxy_set_header Upgrade $http_upgrade;", data)
 		data = fmt.Sprintf("%s\n proxy_set_header Connection \"upgrade\";", data)
-		data = fmt.Sprintf("%s\n }\n", data)
 	}
+	data = fmt.Sprintf("%s\n }\n", data)
 	return data
 }
