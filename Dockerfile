@@ -1,4 +1,4 @@
-FROM golang:alpine AS building
+FROM golang:1.13.9-alpine3.11 AS building
 
 LABEL maintainer="cx24321@hotmail.com"
 
@@ -11,7 +11,7 @@ WORKDIR /go/src/github.com/pigeonligh/my-nginx
 COPY . .
 RUN go build -o nginx-manager
 
-FROM nginx:alpine
+FROM nginx:1.13.9-alpine3.11
 WORKDIR /opt/app
 COPY --from=building /go/src/github.com/pigeonligh/my-nginx .
 
