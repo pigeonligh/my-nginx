@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"net/http"
 	"strconv"
 	"time"
 
@@ -53,8 +52,8 @@ func Login(c *gin.Context) bool {
 	password := c.DefaultPostForm("password", "")
 	if password == Token {
 		token, timeout := MakeToken()
-		c.SetCookie("token", token, 3600, "/", "", http.SameSiteDefaultMode, false, false)
-		c.SetCookie("timeout", strconv.FormatInt(timeout, 10), 3600, "/", "", http.SameSiteDefaultMode, false, false)
+		c.SetCookie("token", token, 3600, "/", "", false, false)
+		c.SetCookie("timeout", strconv.FormatInt(timeout, 10), 3600, "/", "", false, false)
 		return true
 	}
 	return false
@@ -62,8 +61,8 @@ func Login(c *gin.Context) bool {
 
 // Logout function
 func Logout(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", "", http.SameSiteDefaultMode, false, false)
-	c.SetCookie("timeout", "", -1, "/", "", http.SameSiteDefaultMode, false, false)
+	c.SetCookie("token", "", -1, "/", "", false, false)
+	c.SetCookie("timeout", "", -1, "/", "", false, false)
 }
 
 func setupToken(r *gin.RouterGroup) {
